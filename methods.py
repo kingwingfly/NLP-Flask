@@ -41,7 +41,7 @@ def save_results(output):
     for task, result in output.items():
         print('\n', task, '\n' , result, '\n', '-'*50)
         filename = os.path.join(output_dir, f'{task}_output.txt')
-        with open(filename, 'w', encoding='utf-8') as f:
+        with open(filename, 'a+', encoding='utf-8') as f:
             f.write(str(result))
 
 def dnnMethod(dirpath, tasks, queue):
