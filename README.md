@@ -1,4 +1,4 @@
-# LTP-Flask
+# NLP-Flask
 
 <img width="690" alt="image" src="https://user-images.githubusercontent.com/38573173/202845959-c0f4048f-767d-4aab-b5e8-3e7571bd5493.png">
 
