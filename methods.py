@@ -42,7 +42,7 @@ def save_results(output):
         print('\n', task, '\n' , result, '\n', '-'*50)
         filename = os.path.join(output_dir, f'{task}_output.txt')
         with open(filename, 'a+', encoding='utf-8') as f:
-            f.write(str(result))
+            f.write(str(result) + '\n')
 
 def dnnMethod(dirpath, tasks, queue):
     ltp = LTP(os.path.join(workspace, 'data', 'base2'))  # 默认加载 Small 模型
