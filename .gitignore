@@ -127,3 +127,28 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# My
+data/base2/.gitattributes
+data/base2/added_tokens.json
+data/base2/config.json
+data/base2/pytorch_model.bin
+data/base2/README.md
+data/base2/special_tokens_map.json
+data/base2/tokenizer_config.json
+data/base2/vocab.txt
+data/legacy/.gitattributes
+data/legacy/config.json
+data/legacy/cws_model.bin
+data/legacy/ner_model.bin
+data/legacy/pos_model.bin
+data/legacy/README.md
+EventTriplesExtraction/ltp_models/cws.model
+EventTriplesExtraction/ltp_models/md5.txt
+EventTriplesExtraction/ltp_models/ner.model
+EventTriplesExtraction/ltp_models/parser.model
+EventTriplesExtraction/ltp_models/pisrl_win.model
+EventTriplesExtraction/ltp_models/pisrl.model
+EventTriplesExtraction/ltp_models/pos.model
+EventTriplesExtraction/ltp_models/version
+data/base2/tokenizer.json
