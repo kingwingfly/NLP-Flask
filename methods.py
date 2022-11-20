@@ -3,7 +3,11 @@ from ltp import LTP
 import os
 import shutil
 from time import time, asctime
+import jieba
+from jieba import analyse
+import paddle
 import asyncio
+
 # todo asyncio实现异步保存
 
 device = torch.device('cuda:0') if torch.cuda.is_available() else 'cpu'
@@ -39,12 +43,13 @@ def save_results(output):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     for task, result in output.items():
-        print('\n', task, '\n' , result, '\n', '-'*50)
+        print('\n', task, '\n', result, '\n', '-' * 50)
         filename = os.path.join(output_dir, f'{task}_output.txt')
         with open(filename, 'a+', encoding='utf-8') as f:
             f.write(str(result) + '\n')
 
-def dnnMethod(dirpath, tasks, queue):
+
+def dnnMethod(dirpath, tasks):
     ltp = LTP(os.path.join(workspace, 'data', 'base2'))  # 默认加载 Small 模型
     # 将模型移动到 GPU 上
     ltp.to(device)
@@ -56,7 +61,7 @@ def dnnMethod(dirpath, tasks, queue):
     save_results(output)
 
 
-def svmMethod(dirpath, tasks, queue):
+def svmMethod(dirpath, tasks):
     # 使用感知机算法实现的分词、词性和命名实体识别，速度比较快，但是精度略低
     ltp = LTP(os.path.join(workspace, 'data', 'legacy'))
     output = ltp.pipeline(generate_lst(dirpath), tasks=tasks)
@@ -70,6 +75,22 @@ def svmMethod(dirpath, tasks, queue):
     print(cws, pos, ner)
     '''
     save_results(output)
+
+
+def key_words(dirpath, topK, allowPos=('n')):
+    # todo 传入allowPos
+    paddle.enable_static()
+    jieba.enable_paddle()
+    dic = {}
+    for content in generate_lst(dirpath):
+        keywords = analyse.extract_tags(
+            content, topK=topK, withWeight=True, allowPOS=('n')
+        )
+        for word, weight in keywords:
+            dic[word] = dic.get(word, 0) + weight
+    lst = sorted(dic.items(), key=lambda x: x[1], reverse=True)
+    output = dict(lst)
+    save_results({'key_words': output})
 
 
 if __name__ == '__main__':

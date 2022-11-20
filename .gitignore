@@ -152,3 +152,4 @@ EventTriplesExtraction/ltp_models/pisrl.model
 EventTriplesExtraction/ltp_models/pos.model
 EventTriplesExtraction/ltp_models/version
 data/base2/tokenizer.json
+output/*/*.txt
