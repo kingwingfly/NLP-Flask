@@ -17,6 +17,10 @@
 ## 三元组
 算法来源：https://github.com/kingwingfly/EventTriplesExtraction
 
+## 关键词提取
+基于jieba库
+默认开启paddle，paddle版本大于2.0
+
 ## 端口
 默认 8848 
 
