@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-from methods import dnnMethod, svmMethod, generate_lst, key_words
+from methods import dnnMethod, svmMethod, generate_lst, key_words, save_results
 # from EventTriplesExtraction.triple_extraction import TripleExtractor
 from EventTriplesExtraction.baidu_svo_extract import SVOParser
 from EventTriplesExtraction.pattern_event_triples import ExtractEvent
@@ -88,8 +88,8 @@ def keyWords():
         dirpath = request.form['dirpath']
         print(dirpath, topK)
         global queue
-        thread1 = Thread(target=keyWordsWork, args=(dirpath, topK, queue))
-        thread1.start()
+        thread3 = Thread(target=keyWordsWork, args=(dirpath, topK, queue))
+        thread3.start()
         return render_template('result.html')
     elif request.method == 'GET':
         lock = Lock()
@@ -112,7 +112,7 @@ def finish():
 def ltpWork(method, dirpath, tasks, queue):
     tasks = tasks.split(',')
     method = methods_dict[method]
-    method(dirpath, tasks, queue)
+    method(dirpath, tasks)
     queue.put(True)
 
 
@@ -120,15 +120,19 @@ def triplesWork(cuda, method, dirpath, queue):
     Method = triples_methods[method]
     extrator = Method()
     for content in generate_lst(dirpath):
-        if method in ['LTP', 'Baidu DDParser']:
+        if method == 'LTP':
             svos = extrator.triples_main(content)
-            # todo 对百度选用cuda
             print(svos)
+            save_results({'LTP':svos})
+        elif method == 'Baidu DDParser':
+            svos = extrator.triples_main(content)
+            print(svos)
+            save_results({'Baidu DDParser':svos})
         else:
-            events, spos = extrator.phrase_ip(content)
+            _, spos = extrator.phrase_ip(content)
             spos = [i for i in spos if i[0] and i[2]]
-            for spo in spos:
-                print(spo)
+            save_results({'jieba': spos})
+            
     queue.put(True)
 
 def keyWordsWork(dirpath,topK, queue):
