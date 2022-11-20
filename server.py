@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-from methods import dnnMethod, svmMethod, generate_lst
+from methods import dnnMethod, svmMethod, generate_lst, key_words
 # from EventTriplesExtraction.triple_extraction import TripleExtractor
 from EventTriplesExtraction.baidu_svo_extract import SVOParser
 from EventTriplesExtraction.pattern_event_triples import ExtractEvent
@@ -30,18 +30,22 @@ def SVM():
 
 @app.route('/Triples')
 def Triples():
-    return render_template('/Triples.html')
+    return render_template('Triples.html')
 
+@app.route('/keyWords')
+def keyWorlds():
+    return render_template('keywords.html')
 
-@app.route('/result', methods=['GET', 'POST'])
-def result():
+# Result
+@app.route('/ltpResult', methods=['GET', 'POST'])
+def ltpResult():
     if request.method == 'POST':
         method = request.form['method']
         dirpath = request.form['dirpath']
         tasks = request.form['tasks']
         print(method, dirpath, tasks)
         global queue
-        thread1 = Thread(target=work, args=(method, dirpath, tasks, queue))
+        thread1 = Thread(target=ltpWork, args=(method, dirpath, tasks, queue))
         thread1.start()
         return render_template('result.html')
     elif request.method == 'GET':
@@ -77,16 +81,35 @@ def triplesResult():
         else:
             return render_template('result.html')
 
+@app.route('/keyWordsResult', methods=['GET', 'POST'])
+def keyWords():
+    if request.method == 'POST':
+        topK = int(request.form['topK'])
+        dirpath = request.form['dirpath']
+        print(dirpath, topK)
+        global queue
+        thread1 = Thread(target=keyWordsWork, args=(dirpath, topK, queue))
+        thread1.start()
+        return render_template('result.html')
+    elif request.method == 'GET':
+        lock = Lock()
+        lock.acquire()
+        flag = queue.get() if not queue.empty() else False
+        lock.release()
+        if flag:
+            queue = Queue()
+            return redirect(url_for('finish'))
+        else:
+            return render_template('result.html')
+
+# Finish
 @app.route('/finish')
 def finish():
     return render_template('finish.html')
 
+# Works
 
-def main():
-    app.run(host='0.0.0.0', port=8848, debug=True)
-
-
-def work(method, dirpath, tasks, queue):
+def ltpWork(method, dirpath, tasks, queue):
     tasks = tasks.split(',')
     method = methods_dict[method]
     method(dirpath, tasks, queue)
@@ -107,6 +130,14 @@ def triplesWork(cuda, method, dirpath, queue):
             for spo in spos:
                 print(spo)
     queue.put(True)
+
+def keyWordsWork(dirpath,topK, queue):
+    key_words(dirpath, topK)
+    queue.put(True)
+
+
+def main():
+    app.run(host='0.0.0.0', port=8848, debug=True)
 
 if __name__ == '__main__':
     main()

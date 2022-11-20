@@ -7,21 +7,17 @@
 
   <link href='https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Source+Sans+Pro&display=swap' rel='stylesheet'
     type='text/css' />
-  <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" type="text/css">
-  <title>SVM</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}" type="text/css">
+  <title>KeyWords</title>
 </head>
 
 <body class='typora-export os-windows'>
   <div class='typora-export-content'>
     <div id='write' class=' first-line-indent'>
-      <h1 id='svm'><span>SVM</span></h1>
+      <h1 id='svm'><span>KeyWords</span></h1>
       <p><a href="/"><span>返回上一页</span></a><span> </span></p>
-      <ul>任务选择：
-        <label><input type="checkbox" name="task" value="cws">分词</label>
-        <label><input type="checkbox" name="task" value="pos">词性</label>
-        <label><input type="checkbox" name="task" value="ner">命名实体</label>
-      </ul>
-      <p>文件路径：<input type="text" placeholder="./example" id="dirpath" value="./example"></p>
+      <p>topK：<input type="text" placeholder="20" id="topK" value="20" required></p>
+      <p>文件路径：<input type="text" placeholder="./example" id="dirpath" value="./example" required></p>
       <p><input type="button" value="Run" id="run-btn"></p>
     </div>
   </div>
@@ -32,40 +28,7 @@
 <script>
   var runBtn = document.getElementById('run-btn');
   var dirpath = document.getElementById('dirpath');
-  var flag = true
-
-  function taskList() {
-    flag = true
-    check_val = []
-    tasks = document.getElementsByName('task');
-    if (tasks[2].checked) {
-      if (!tasks[1].checked) {
-        alert('命名实体标注 依赖 词性标注');
-        tasks[1].checked = true;
-        flag = false;
-        return
-      }
-    }
-    if (tasks[1].checked) {
-      if (!tasks[0].checked) {
-        alert('词性标注 依赖 分词');
-        tasks[0].checked = true;
-        flag = false;
-        return
-      }
-    }
-    for (k in tasks) {
-      if (tasks[k].checked) {
-        check_val.push(tasks[k].value);
-      }
-    }
-    if (check_val=='') {
-      alert('任务为空！')
-      flag = false
-      return
-    }
-    return check_val
-  }
+  var topK = document.getElementById('topK');
 
   function httpPost(URL, PARAMS) {
     var formEltTemp = document.createElement('form');
@@ -85,20 +48,17 @@
   }
 
   runBtn.onclick = function () {
-    check_var = taskList()
-    if (!flag) {
-      return
-    }
     var params = {
-      'method': 'SVM',
+      'topK': topK.value, 
       'dirpath': dirpath.value,
-      'tasks': check_val,
-    };
-    msg = '方法：' + params['method'] + '\n目标路径：' + params['dirpath'] + '\n任务：' + params['tasks'];
-    if (params['dirpath']=='') {
-      alert('路径不能为空！');
+    }
+    msg = ['目标路径：' + params['dirpath']];
+    if (params['topK'] == '') {
+      alert('关键词数量（topK）不能为空！')
+    } else if (params['dirpath']=='') {
+      alert('路径不能为空！')
     } else if (confirm(msg)) {
-      httpPost('/ltpResult', params);
+      httpPost('/keyWordsResult', params);
     }
   }
 </script>
