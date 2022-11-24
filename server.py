@@ -1,16 +1,21 @@
 from flask import Flask, render_template, request, redirect, url_for
 from methods import dnnMethod, svmMethod, generate_lst, key_words, save_results
+
 # from EventTriplesExtraction.triple_extraction import TripleExtractor
 from EventTriplesExtraction.baidu_svo_extract import SVOParser
 from EventTriplesExtraction.pattern_event_triples import ExtractEvent
+from EventTriplesExtraction.triple_extraction import TripleExtractor
 from threading import Lock, Thread
 from queue import Queue
 
 
-
 app = Flask('Auto LTP')
 methods_dict = {'DNN': dnnMethod, 'SVM': svmMethod}
-triples_methods = {'LTP': 'TripleExtractor', 'Baidu DDParser': SVOParser, 'jieba': ExtractEvent}
+triples_methods = {
+    'LTP': TripleExtractor,
+    'Baidu DDParser': SVOParser,
+    'jieba': ExtractEvent,
+}
 queue = Queue()
 
 
@@ -28,13 +33,16 @@ def DNN():
 def SVM():
     return render_template('SVM.html')
 
+
 @app.route('/Triples')
 def Triples():
     return render_template('Triples.html')
 
+
 @app.route('/keyWords')
 def keyWorlds():
     return render_template('keywords.html')
+
 
 # Result
 @app.route('/ltpResult', methods=['GET', 'POST'])
@@ -59,10 +67,11 @@ def ltpResult():
         else:
             return render_template('result.html')
 
+
 @app.route('/triplesResult', methods=['GET', 'POST'])
 def triplesResult():
     if request.method == 'POST':
-        cuda = request.form['cuda']
+        cuda = True if request.form['cuda'] == 'true' else False
         method = request.form['method']
         dirpath = request.form['dirpath']
         print(cuda, method, dirpath)
@@ -80,6 +89,7 @@ def triplesResult():
             return redirect(url_for('finish'))
         else:
             return render_template('result.html')
+
 
 @app.route('/keyWordsResult', methods=['GET', 'POST'])
 def keyWords():
@@ -102,12 +112,15 @@ def keyWords():
         else:
             return render_template('result.html')
 
+
 # Finish
 @app.route('/finish')
 def finish():
     return render_template('finish.html')
 
+
 # Works
+
 
 def ltpWork(method, dirpath, tasks, queue):
     tasks = tasks.split(',')
@@ -118,30 +131,29 @@ def ltpWork(method, dirpath, tasks, queue):
 
 def triplesWork(cuda, method, dirpath, queue):
     Method = triples_methods[method]
-    extrator = Method()
+    extrator = Method(cuda)
+    result = []
     for content in generate_lst(dirpath):
         if method == 'LTP':
             svos = extrator.triples_main(content)
-            print(svos)
-            save_results({'LTP':svos})
         elif method == 'Baidu DDParser':
             svos = extrator.triples_main(content)
-            print(svos)
-            save_results({'Baidu DDParser':svos})
         else:
-            _, spos = extrator.phrase_ip(content)
-            spos = [i for i in spos if i[0] and i[2]]
-            save_results({'jieba': spos})
-            
+            _, svos = extrator.phrase_ip(content)
+            svos = [i for i in svos if i[0] and i[2]]
+        result.append(svos)
+    save_results({method: result})
     queue.put(True)
 
-def keyWordsWork(dirpath,topK, queue):
+
+def keyWordsWork(dirpath, topK, queue):
     key_words(dirpath, topK)
     queue.put(True)
 
 
 def main():
     app.run(host='0.0.0.0', port=8848, debug=True)
+
 
 if __name__ == '__main__':
     main()

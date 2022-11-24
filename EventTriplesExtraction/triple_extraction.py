@@ -4,11 +4,12 @@
 # Author: lhy<lhy_in_blcu@126.com,https://huangyong.github.io>
 # Date: 18-3-12
 from EventTriplesExtraction.sentence_parser import *
+# from sentence_parser import *
 import re
 
 class TripleExtractor:
-    def __init__(self):
-        self.parser = LtpParser()
+    def __init__(self, if_cuda=True):
+        self.parser = LtpParser(if_cuda)
 
     '''文章分句处理, 切分长句，冒号，分号，感叹号等做切分标识'''
     def split_sents(self, content):
@@ -23,7 +24,7 @@ class TripleExtractor:
                          postags[word_index][0] not in ['w', 'u', 'x'] and words[word_index]])
             o = ''.join([words[word_index] for word_index in range(role_info['A1'][1], role_info['A1'][2]+1) if
                          postags[word_index][0] not in ['w', 'u', 'x'] and words[word_index]])
-            if s  and o:
+            if s and o:
                 return '1', [s, v, o]
         # elif 'A0' in role_info:
         #     s = ''.join([words[word_index] for word_index in range(role_info['A0'][1], role_info['A0'][2] + 1) if
@@ -131,7 +132,8 @@ def test():
     content5 = ''' 以色列国防军20日对加沙地带实施轰炸，造成3名巴勒斯坦武装人员死亡。此外，巴勒斯坦人与以色列士兵当天在加沙地带与以交界地区发生冲突，一名巴勒斯坦人被打死。当天的冲突还造成210名巴勒斯坦人受伤。
     当天，数千名巴勒斯坦人在加沙地带边境地区继续“回归大游行”抗议活动。部分示威者燃烧轮胎，并向以军投掷石块、燃烧瓶等，驻守边境的以军士兵向示威人群发射催泪瓦斯并开枪射击。'''
     extractor = TripleExtractor()
-    svos = extractor.triples_main(content2)
+    svos = extractor.triples_main(content5)
     print('svos', svos)
 
-test()
+if __name__ == "__main__":
+    test()
