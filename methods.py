@@ -20,6 +20,7 @@ zh_tasks = {
     'srl': '语义角色',
     'dep': '依存句法',
     'sdp': '语义依存',
+    'sdpg': 'SDPG',
 }
 
 
@@ -32,7 +33,10 @@ def generate_lst(path):
                 file = os.path.join(dirpath, filename)
                 with open(file, 'r', encoding='utf-8') as f:
                     print(f'Reading {file}')
-                    lst.append(f.read())
+                    lines = f.readlines()
+                    for line in lines:
+                        if len(line) and line != '\n':
+                            lst.append(line.strip('\n'))
     return lst
 
 
@@ -43,14 +47,15 @@ def save_results(output):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     for task, result in output.items():
-        print('\n', task, '\n', result, '\n', '-' * 50)
+        # print('\n', task, '\n', result, '\n', '-' * 50)
         filename = os.path.join(output_dir, f'{task}_output.txt')
         with open(filename, 'a+', encoding='utf-8') as f:
             f.write(str(result) + '\n')
+    print("Saved!")
 
 
 def dnnMethod(dirpath, tasks):
-    ltp = LTP(os.path.join(workspace, 'data', 'base2'))  # 默认加载 Small 模型
+    ltp = LTP(os.path.join(workspace, 'data', 'small'))  # 默认加载 Small 模型
     # 将模型移动到 GPU 上
     ltp.to(device)
     output = ltp.pipeline(generate_lst(dirpath), tasks=tasks)

@@ -10,9 +10,9 @@ from torch.cuda import is_available
 
 
 class SVOParser:
-    def __init__(self):
-        use_cuda = True if is_available() else False
-        # use_cuda = False
+    def __init__(self, use_cuda):
+        # use_cuda = True if is_available() else False
+        use_cuda = False 
         self.parser = DDParser(use_pos=True, use_cuda=use_cuda, buckets=True)
         print('loaded model')
 

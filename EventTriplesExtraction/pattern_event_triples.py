@@ -3,7 +3,7 @@ import re, os
 import jieba.posseg as pseg
 
 class ExtractEvent:
-    def __init__(self):
+    def __init__(self, *args):
         self.map_dict = self.load_mapdict()
         self.minlen = 2
         self.maxlen = 30
@@ -276,12 +276,10 @@ class ExtractEvent:
                         tmp_dict = {str(verb[0]) + str(verb[1]): ['V', verbs[idx]] for idx, verb in enumerate(verb_tokspans)}
                         pp_dict = {str(pp[0]) + str(pp[1]): ['N', pps[idx]] for idx, pp in enumerate(pp_tokspans)}
                         tmp_dict.update(pp_dict)
-                        sort_keys = sorted([int(i) for i in tmp_dict.keys()])
+                        sort_keys = sorted([i for i in tmp_dict.keys()], key=lambda x: int(x))
                         for i in sort_keys:
-                            if i < 10:
-                                i = '0' + str(i)
-                            wds_tmp.append(tmp_dict[str(i)][-1])
-                            postags_tmp.append(tmp_dict[str(i)][0])
+                            wds_tmp.append(tmp_dict[i][-1])
+                            postags_tmp.append(tmp_dict[i][0])
                         wds_tmp, postags_tmp = self.modify_duplicate(wds_tmp, postags_tmp, self.SPO_v, 'V')
                         wds_tmp, postags_tmp = self.modify_duplicate(wds_tmp, postags_tmp, self.SPO_n, 'N')
                         if len(postags_tmp) < 2:
@@ -335,7 +333,7 @@ if __name__ == '__main__':
     最近，生活在四川甘孜州理塘县的藏族小伙丁真，因为一条不到10秒的视频意外走红网络，不仅被当地聘为旅游大使，更引发了各地文旅机构助推热潮。通过丁真这个窗口让更多人了解到四川乃至全国的景点，网友纷纷表示“这才是网红最好的打开方式”。今晚，我们就从这个藏族小伙聊起。
     　11月30日警方通报了情况：涉事男生马某是山东外事职业大学大学大一在校生，18岁，女生李某是四川大学锦江学院大三在校生，21岁，两人系情侣关系，当天马某从山东乘坐飞机来到李某学校，然后通过衣物掩饰混入了李某所在宿舍楼，在宿舍内两人见面后因为感情纠纷，马某拿起了宿舍内的一把12厘米长剪刀，将李某捅致重伤后跳楼身亡。
     """
-    events, spos = handler.phrase_ip(content1)
+    events, spos = handler.phrase_ip(content4)
     spos = [i for i in spos if i[0] and i[2]]
     for spo in spos:
         print(spo)
