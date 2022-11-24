@@ -1,3 +1,8 @@
+这里clone并修改了别人的项目
+
+以下是那个项目的README
+
+
 # EventTriplesExtraction
 &nbsp;&nbsp;EventTriplesExtraction based on dependency parser and semantic role labeling, 基于依存句法与语义角色标注的事件三元组抽取
 &nbsp;&nbsp;文本表示一直是个重要问题，如何以清晰，简介的方式对一个文本信息进行有效表示是个长远的任务  
