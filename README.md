@@ -15,7 +15,7 @@
 ![image](https://user-images.githubusercontent.com/38573173/202848279-f50e3c9c-59f6-4fd6-b8c0-226caa106211.png)
 
 ## 三元组
-算法来源：https://github.com/kingwingfly/EventTriplesExtraction
+算法来源：https://github.com/liuhuanyong/EventTriplesExtraction
 
 ## 关键词提取
 基于jieba库
