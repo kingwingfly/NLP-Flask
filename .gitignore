@@ -156,7 +156,6 @@ output/*/*.txt
 data/small/.gitattributes
 data/small/added_tokens.json
 data/small/config.json
-data/small/pytorch_model.bin
 data/small/README.md
 data/small/special_tokens_map.json
 data/small/tokenizer_config.json
@@ -165,9 +164,10 @@ data/small/vocab.txt
 data/tiny/.gitattributes
 data/tiny/added_tokens.json
 data/tiny/config.json
-data/tiny/pytorch_model.bin
 data/tiny/README.md
 data/tiny/special_tokens_map.json
 data/tiny/tokenizer_config.json
 data/tiny/tokenizer.json
 data/tiny/vocab.txt
+data/tiny/pytorch_model.bin
+data/small/pytorch_model.bin
