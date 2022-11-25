@@ -171,5 +171,5 @@ data/tiny/tokenizer.json
 data/tiny/vocab.txt
 data/tiny/pytorch_model.bin
 data/small/pytorch_model.bin
-results/triples/LTP_output.txt
-input/baike.txt
+results/triples
+input

@@ -9,6 +9,7 @@ from threading import Lock, Thread
 from queue import Queue
 
 
+
 app = Flask('Auto LTP')
 methods_dict = {'DNN': dnnMethod, 'SVM': svmMethod}
 triples_methods = {

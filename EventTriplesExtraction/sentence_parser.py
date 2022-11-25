@@ -7,7 +7,7 @@
 import os
 from ltp import LTP
 import torch
-from pyltp import Segmentor, Postagger, Parser, NamedEntityRecognizer, SementicRoleLabeller
+from pyltp import SementicRoleLabeller
 
 workspace = os.path.dirname(__file__)
 print(workspace)
@@ -19,6 +19,7 @@ class LtpParser:
         else:
             device = 'cpu'
         LTP_DIR = "./EventTriplesExtraction/ltp_models"
+        # todo 该模型依然运行在CPU上，新的ltp输出srl内容有变，不好修改
         self.labeller = SementicRoleLabeller(os.path.join(LTP_DIR, "pisrl_win.model"))
         self.ltp = LTP(os.path.join(workspace, '..', 'data', 'small')).to(device)
 
