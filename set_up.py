@@ -1,6 +1,6 @@
 import subprocess
 
-# 获取基色设备
+# 获取计算设备
 temp = -1
 while temp not in ['0', '11.7', '11.6', '11.2', '11.1', '10.2', '10.1']:
     temp = input(
