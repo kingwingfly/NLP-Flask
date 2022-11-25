@@ -7,7 +7,7 @@
 import os
 from ltp import LTP
 import torch
-from pyltp import Segmentor, Postagger, Parser, NamedEntityRecognizer, SementicRoleLabeller
+from pyltp import SementicRoleLabeller
 
 workspace = os.path.dirname(__file__)
 print(workspace)
