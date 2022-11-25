@@ -3,7 +3,7 @@
 <img width="690" alt="image" src="https://user-images.githubusercontent.com/38573173/202845959-c0f4048f-767d-4aab-b5e8-3e7571bd5493.png">
 
 ## 基本情况  
-语言： Python （开发时使用3.10.6，仅供参考）  
+语言： Python （开发时使用3.10.8，仅供参考）  
 
 基于 Flask、LTP
 
