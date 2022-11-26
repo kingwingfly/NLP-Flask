@@ -49,7 +49,7 @@ async def spider(target, url):
         r = await client.get(url)
         if r.status_code != 200:
             print(f'{target} failed')
-            with open('./spider/log.txt', 'w', encoding='utf-8') as f:
+            with open('./spider/log.txt', 'a', encoding='utf-8') as f:
                 f.write(f'{{{target}: {url}}}\n')
                 return
         response = Selector(r.text)
