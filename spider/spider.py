@@ -3,6 +3,7 @@ import asyncio
 import re
 from parsel import Selector
 from urllib import parse
+import os
 import json
 
 
@@ -56,17 +57,30 @@ class UrlsLoader():
     def index_urls(self, index_num):
         return self.urls[index_num]
 
+def save_to_json():
+    results = {}
+    with open('./spider/results_temp.txt', 'r', encoding='utf-8') as f:
+        for line in f:
+            results |= eval(line.strip('\n'))
+    os.remove('./spider/results_temp.txt')
+    with open('./spider/results.json', 'w', encoding='utf-8') as f:
+        f.write(json.dumps(results, ensure_ascii=False))
+        
+
 async def save_result():
-    with open('./spider/result.txt', 'a', encoding='utf-8') as f:
+    with open('./spider/results_temp.txt', 'a', encoding='utf-8') as f:
         while result := await queue.get():
             f.write(str(result) + '\n')
+    save_to_json()
+    # todo to json
     print('Finished!')
 
 
 async def run():
     batch_size = 2
     urls = {
-        '数字孪生': 'https://baike.baidu.com/item/%E6%95%B0%E5%AD%97%E5%AD%AA%E7%94%9F/22197545?fr=aladdin'
+        '数字孪生': 'https://baike.baidu.com/item/%E6%95%B0%E5%AD%97%E5%AD%AA%E7%94%9F/22197545?fr=aladdin',
+        '美国国防部': 'https://baike.baidu.com/item/%E7%BE%8E%E5%9B%BD%E5%9B%BD%E9%98%B2%E9%83%A8/3430064?fromModule=lemma_inlink',
     }
     urls_loader = UrlsLoader(urls, batch_size)
     for batch in urls_loader:
