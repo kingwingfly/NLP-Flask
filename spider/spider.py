@@ -47,6 +47,11 @@ def second_parse(values: list):
 async def spider(target, url):
     async with httpx.AsyncClient() as client:
         r = await client.get(url)
+        if r.status_code != 200:
+            print(f'{target} failed')
+            with open('./spider/log.txt', 'w', encoding='utf-8') as f:
+                f.write(f'{{{target}: {url}}}\n')
+                return
         response = Selector(r.text)
         keys = response.css('dt.basicInfo-item::text').getall()
         keys = [first_parse(i) for i in keys if i != '\n']
@@ -61,6 +66,7 @@ async def save_result():
     results = {}
     while result := await queue.get():
         results |= result
+        # print(results)
     with open('./spider/results.json', 'w', encoding='utf-8') as f:
         json.dump(results, f, ensure_ascii=False)
     print('Finished!')
@@ -76,7 +82,7 @@ def load_urls():
     
 
 async def run():
-    batch_size = 2
+    batch_size = 8
     # todo Auto get urls
     urls = load_urls()
     urls_loader = UrlsLoader(urls, batch_size)
