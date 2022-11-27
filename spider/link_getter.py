@@ -1,5 +1,4 @@
 import httpx
-import re
 import asyncio
 from parsel import Selector
 import json
@@ -28,7 +27,7 @@ class UrlsLoader:
 async def link_getter(source, url):
     start = 'https://baike.baidu.com'
     async with httpx.AsyncClient() as client:
-        r = await client.get(url=url)
+        r = await client.get(url, follow_redirects=True,timeout=3)
         respone = Selector(r.text)
         links = respone.css('a[data-lemmaid]::attr(href)').getall()
         names = respone.css('a[data-lemmaid]::text').getall()
@@ -71,7 +70,7 @@ async def schedule():
 
 
 def main():
-    depth = 3
+    depth = 2
     batch_size = 256
     # 每批次完成后停顿时间
     halt = 3
