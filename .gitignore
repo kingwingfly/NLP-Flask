@@ -175,4 +175,4 @@ results/triples
 input
 trash
 spider/*.json
-spider_results
+spider_results/*.json
