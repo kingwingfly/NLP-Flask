@@ -173,6 +173,6 @@ data/tiny/pytorch_model.bin
 data/small/pytorch_model.bin
 results/triples
 input
-trsh
+trash
 spider/*.json
 spider_results
