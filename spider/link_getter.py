@@ -60,7 +60,7 @@ async def save_results(url_root):
     results_ultra = url_root
     while result := await queue.get():
         results_ultra |= result
-    with open('./spider/urls.json', 'w', encoding='utf-8') as f:
+    with open('./spider_results/urls.json', 'w', encoding='utf-8') as f:
         json.dump(results_ultra, f, ensure_ascii=False)
     print('Finished')
 

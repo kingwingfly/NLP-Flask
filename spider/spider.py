@@ -63,6 +63,7 @@ async def spider(target, url):
       
 
 async def save_result():
+    results_path = './spider_results/results.json'
     results = {}
     while result := await queue.get():
         results |= result
@@ -77,9 +78,17 @@ async def schedule():
 
 
 def load_urls():
-    with open('./spider/related_things.json', 'r', encoding='utf-8') as f:
+    with open('./spider_results/related_things.json', 'r', encoding='utf-8') as f:
         return json.load(f)
-    
+    # with open('./spider_results/log.json', 'r', encoding='utf-8') as f:
+    #     return json.load(f)
+
+async def save_log():
+    msgs = {}
+    while msg := await queue_log.get():
+        msgs |= msg
+        with open('./spider_results/log.json', 'w', encoding='utf-8') as f:
+            json.dump(msgs, f, ensure_ascii=False)
 
 async def run():
     batch_size = 8
