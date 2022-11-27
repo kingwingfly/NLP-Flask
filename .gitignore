@@ -175,3 +175,4 @@ results/triples
 input
 trsh
 spider/*.json
+spider_results
