@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from methods import dnnMethod, svmMethod, generate_lst, key_words, save_results
 
-# from EventTriplesExtraction.triple_extraction import TripleExtractor
 from EventTriplesExtraction.baidu_svo_extract import SVOParser
 from EventTriplesExtraction.pattern_event_triples import ExtractEvent
 from EventTriplesExtraction.triple_extraction import TripleExtractor
