@@ -14,6 +14,7 @@ def analyse_data(data: dict[str, dict[str, str | list]]):
             result[author] = result.get(author, [])+[(article, authors)]
     f = open('./cooperation_analyse/output/output.json', 'w', encoding='utf-8')
     json.dump(result, f, ensure_ascii=False)
+    f.close()
 
 if __name__ == '__main__':
     path = './cooperation_analyse/input/input.json'

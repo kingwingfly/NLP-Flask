@@ -68,18 +68,25 @@ async def spider(target, url):
         await queue_schedule.put(target)
       
 
-async def save_result():
-    results_path = './spider_results/results.json'
+async def save_result(type_):
+    results_path = f'./info_extension/{type_}.json'
     results = {}
     if os.path.exists(results_path):
         with open(results_path, 'r', encoding='utf-8') as f:
             results = json.load(f)
     while result := await queue.get():
+        keys = list(result.values())[0].keys()
+        if type_ == 'Author-作者' and ('星座' in keys or '体重' in keys or '身高' in keys):
+            print(f'{list(result.keys())[0]} may be not a researcher.')
+            continue
+        if len(keys) == 1:
+            print(f'{list(result.keys())[0]} may have no attribute.')
+            continue
         results |= result
         # print(results)
         with open(results_path, 'w', encoding='utf-8') as f:
             json.dump(results, f, ensure_ascii=False)
-    print('Finished!')
+    print(f'{type_} Finished!')
 
 async def schedule(total):
     num = 0
@@ -88,20 +95,20 @@ async def schedule(total):
         print(f'{source} finished {num}/{total}')
 
 
-def load_urls():
-    with open('./spider_results/related_things.json', 'r', encoding='utf-8') as f:
+def load_urls(type_):
+    with open(f'./info_extension/output/{type_}.json', 'r', encoding='utf-8') as f:
         return json.load(f)
-    # with open('./spider_results/log.json', 'r', encoding='utf-8') as f:
+    # with open('./info_extension/log.json', 'r', encoding='utf-8') as f:
     #     return json.load(f)
 
-async def save_log():
+async def save_log(type_):
     msgs = {}
     while msg := await queue_log.get():
         msgs |= msg
-        with open('./spider_results/log.json', 'w', encoding='utf-8') as f:
+        with open(f'./info_extension/{type_}_log.json', 'w', encoding='utf-8') as f:
             json.dump(msgs, f, ensure_ascii=False)
 
-async def run(urls):
+async def spider_run(urls):
     batch_size = 8
     halt = 2
     urls_loader = UrlsLoader(urls, batch_size)
@@ -113,12 +120,14 @@ async def run(urls):
     await queue_log.put(None)
 
 def main():
-    urls = load_urls()
-    total = len(urls)
-    loop = asyncio.new_event_loop()
-    coros = [run(urls), save_result(), schedule(total), save_log()]
-    coro = asyncio.wait(coros)
-    loop.run_until_complete(coro)
+    for type_ in ["Author-作者", "Organ-单位", "Keyword-关键词", "Keyword_of_abstract"]:
+        urls = load_urls(type_)
+        total = len(urls)
+        loop = asyncio.new_event_loop()
+        coros = [spider_run(urls), save_result(type_), schedule(total), save_log(type_)]
+        coro = asyncio.wait(coros)
+        loop.run_until_complete(coro)
+        loop.close()
 
 
 if __name__ == '__main__':
