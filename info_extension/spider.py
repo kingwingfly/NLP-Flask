@@ -120,14 +120,15 @@ async def spider_run(urls):
     await queue_log.put(None)
 
 def main():
-    for type_ in ["Author-作者", "Organ-单位", "Keyword-关键词", "Keyword_of_abstract"]:
-        urls = load_urls(type_)
-        total = len(urls)
-        loop = asyncio.new_event_loop()
-        coros = [spider_run(urls), save_result(type_), schedule(total), save_log(type_)]
-        coro = asyncio.wait(coros)
-        loop.run_until_complete(coro)
-        loop.close()
+    # tasks = ["Author-作者", "Organ-单位", "Keyword-关键词", "Keyword_of_abstract"]
+    type_ = "Keyword_of_abstract"
+    urls = load_urls(type_)
+    total = len(urls)
+    loop = asyncio.new_event_loop()
+    coros = [spider_run(urls), save_result(type_), schedule(total), save_log(type_)]
+    coro = asyncio.wait(coros)
+    loop.run_until_complete(coro)
+    loop.close()
 
 
 if __name__ == '__main__':
